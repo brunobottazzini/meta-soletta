@@ -56,7 +56,7 @@ RRECOMMENDS_${PN} = "\
 # since we only enable flow-module-udev only with systemd feature
 # can can disable the RDEPENDS based on the same criteria
 RDEPENDS_${PN} = " \
-             ${@bb.utils.contains('DISTRO_FEATURES','systemd','libudev','',d)} \
+             libudev \
              chrpath \
              libpcre \
 "
