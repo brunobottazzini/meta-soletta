@@ -9,7 +9,9 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://COPYING;md5=53eeaddf328b23e2355816e257450eaa"
 PV = "1_beta11"
 
-SRC_URI = "git://github.com/solettaproject/soletta.git;protocol=git;tag=v${PV}"
+#7835c2e726a1e2d94f9919077d35022112892894 is commit id to tag v1_beta6
+SRC_URI = "git://github.com/solettaproject/soletta.git;protocol=git;rev=7835c2e726a1e2d94f9919077d35022112892894 \
+           file://0001-modules-int-fix-division-sigfpe.patch"
 
 S = "${WORKDIR}/git"
 
