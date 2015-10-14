@@ -1,0 +1,27 @@
+From dbab45ac888896115608c4e96b528b65610c26d6 Mon Sep 17 00:00:00 2001
+From: Murilo Belluzzo <murilo.belluzzo@intel.com>
+Date: Tue, 13 Oct 2015 15:38:09 -0300
+Subject: [PATCH] board detection: Fix invalid char in minnow name
+
+Signed-off-by: Murilo Belluzzo <murilo.belluzzo@intel.com>
+Signed-off-by: Bruno Bottazzini <bruno.bottazzini@intel.com>
+---
+ data/jsons/board_detect.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/jsons/board_detect.json b/data/jsons/board_detect.json
+index ae380f0..b8922af 100644
+--- a/data/jsons/board_detect.json
++++ b/data/jsons/board_detect.json
+@@ -38,7 +38,7 @@
+      ]
+     },
+     {
+-     "name": "intel-minnow-max-linux_gt_3.19",
++     "name": "intel-minnow-max-linux_gt_3_19",
+      "validation": [
+       {
+        "file_path": "/sys/devices/virtual/dmi/id/bios_version",
+-- 
+2.6.0
+
