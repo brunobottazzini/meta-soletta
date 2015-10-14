@@ -1,0 +1,404 @@
+From 72b748b256f77857508bdaaeeb1becae26aad9ee Mon Sep 17 00:00:00 2001
+From: Bruno Bottazzini <bruno.bottazzini@intel.com>
+Date: Wed, 14 Oct 2015 13:43:36 -0300
+Subject: [PATCH] Demo
+
+Signed-off-by: Bruno Bottazzini <bruno.bottazzini@intel.com>
+---
+ repos/demo/minnow-calamari/README                  |  36 ++++++
+ repos/demo/minnow-calamari/calamari-7seg-value.fbp |  38 ++++++
+ .../minnow-calamari/calamari-buttons-rgb-led.fbp   |  44 +++++++
+ repos/demo/minnow-calamari/calamari-lever.fbp      |  35 ++++++
+ repos/demo/minnow-calamari/calamari-rgb-led.fbp    |  44 +++++++
+ repos/demo/minnow-calamari/sol-flow.json           | 133 +++++++++++++++++++++
+ server/tools.js                                    |   2 +-
+ 8 files changed, 331 insertions(+), 2 deletions(-)
+ create mode 100644 repos/demo/minnow-calamari/README
+ create mode 100755 repos/demo/minnow-calamari/calamari-7seg-value.fbp
+ create mode 100755 repos/demo/minnow-calamari/calamari-buttons-rgb-led.fbp
+ create mode 100755 repos/demo/minnow-calamari/calamari-lever.fbp
+ create mode 100755 repos/demo/minnow-calamari/calamari-rgb-led.fbp
+ create mode 100644 repos/demo/minnow-calamari/sol-flow.json
+
+diff --git a/repos/demo/minnow-calamari/README b/repos/demo/minnow-calamari/README
+new file mode 100644
+index 0000000..f71c341
+--- /dev/null
++++ b/repos/demo/minnow-calamari/README
+@@ -0,0 +1,36 @@
++This showcases the Intel MinnoBoard Max using the Calamari Lure.
++
++http://elinux.org/Minnowboard:MaxLures
++http://www.minnowboard.org/
++
++sol-fbp-runner will read the options from sol-flow.json.
++
++### Special note if your Linux Kernel version is >=  3.18.
++
++The following samples make use of GPIOs and require special attention:
++ * calamari-7seg-segments.fbp
++ * calamari-7seg-value.fbp
++ * calamari-buttons-rgb-led.fbp
++ * calamari-rgb-led.fbp
++ * calamari-lever.fbp
++
++### Why?
++
++The GPIO pins numbers have changed in Linux Kernel 3.18,
++the original pin numbers were added by 256.
++
++sol-flow.json contains the original numbers, prior to Linux Kernel 3.18.
++
++sol-flow-new.json contains the same content, but with the GPIO pin numbers
++added by 256. So, if your Linux Kernel >= 3.18, please,
++use this file.
++
++Basically, there are two methods of doing that:
++
++ * Method 1 [recommended] - Run:
++        SOL_FLOW_MODULE_RESOLVER_CONFFILE=sol-flow-new.json sol-fbp-runner example.fbp
++
++ * Method 2 - Update the sol-flow.json file manually. You can edit it manually or copy the
++contents from sol-flow.json:
++        cp sol-flow-new.json sol-flow.json
++        sol-fbp-runner example.fbp
+diff --git a/repos/demo/minnow-calamari/calamari-7seg-value.fbp b/repos/demo/minnow-calamari/calamari-7seg-value.fbp
+new file mode 100755
+index 0000000..157d7b5
+--- /dev/null
++++ b/repos/demo/minnow-calamari/calamari-7seg-value.fbp
+@@ -0,0 +1,38 @@
++#!/usr/bin/env sol-fbp-runner
++# This file is part of the Soletta Project
++#
++# Copyright (C) 2015 Intel Corporation. All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++#   * Redistributions of source code must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions in binary form must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in
++#     the documentation and/or other materials provided with the
++#     distribution.
++#   * Neither the name of Intel Corporation nor the names of its
++#     contributors may be used to endorse or promote products derived
++#     from this software without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
++# Uses a timer to loop an accumulator from 0 to 15 and display using
++# Intel MinnowBoard's Calamari Lure 7-segment display.
++
++accumulator(int/accumulator:setup_value=val:0|min:0|max:15|step:1)
++
++timer(wallclock/second) OUT -> INC accumulator
++accumulator OUT -> VALUE seg(SevenSegments)
+diff --git a/repos/demo/minnow-calamari/calamari-buttons-rgb-led.fbp b/repos/demo/minnow-calamari/calamari-buttons-rgb-led.fbp
+new file mode 100755
+index 0000000..0ce7437
+--- /dev/null
++++ b/repos/demo/minnow-calamari/calamari-buttons-rgb-led.fbp
+@@ -0,0 +1,44 @@
++#!/usr/bin/env sol-fbp-runner
++# This file is part of the Soletta Project
++#
++# Copyright (C) 2015 Intel Corporation. All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++#   * Redistributions of source code must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions in binary form must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in
++#     the documentation and/or other materials provided with the
++#     distribution.
++#   * Neither the name of Intel Corporation nor the names of its
++#     contributors may be used to endorse or promote products derived
++#     from this software without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
++# This example links Buttons 1, 2 and 3 from calamari to Red, Green
++# and Blue leds, accessed directly over GPIO as defined in
++# sol-flow.json in the current directory.
++#
++# The button presses will also go to console on stdout.
++
++btn1(Button1) OUT -> RED led(RGBLed)
++btn1 OUT -> IN log(console:prefix="btn1_pressed ")
++btn2(Button2) OUT -> GREEN led
++btn2 OUT -> IN log2(console:prefix="btn2_pressed ")
++btn3(Button3) OUT -> BLUE led
++btn3 OUT -> IN log3(console:prefix="btn3_pressed ")
++
+diff --git a/repos/demo/minnow-calamari/calamari-lever.fbp b/repos/demo/minnow-calamari/calamari-lever.fbp
+new file mode 100755
+index 0000000..54d9858
+--- /dev/null
++++ b/repos/demo/minnow-calamari/calamari-lever.fbp
+@@ -0,0 +1,35 @@
++#!/usr/bin/env sol-fbp-runner
++# This file is part of the Soletta Project
++#
++# Copyright (C) 2015 Intel Corporation. All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++#   * Redistributions of source code must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions in binary form must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in
++#     the documentation and/or other materials provided with the
++#     distribution.
++#   * Neither the name of Intel Corporation nor the names of its
++#     contributors may be used to endorse or promote products derived
++#     from this software without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
++# This example links the Calamari lever (SPI) to the 7segment display,
++# displaying the level from 0-15 (in hexadecimal)
++
++lever(SegmentsLever) OUT -> VALUE seven_segments(SevenSegments)
+diff --git a/repos/demo/minnow-calamari/calamari-rgb-led.fbp b/repos/demo/minnow-calamari/calamari-rgb-led.fbp
+new file mode 100755
+index 0000000..4c121f4
+--- /dev/null
++++ b/repos/demo/minnow-calamari/calamari-rgb-led.fbp
+@@ -0,0 +1,44 @@
++#!/usr/bin/env sol-fbp-runner
++# This file is part of the Soletta Project
++#
++# Copyright (C) 2015 Intel Corporation. All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++#   * Redistributions of source code must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++#   * Redistributions in binary form must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in
++#     the documentation and/or other materials provided with the
++#     distribution.
++#   * Neither the name of Intel Corporation nor the names of its
++#     contributors may be used to endorse or promote products derived
++#     from this software without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
++# This example will blink each of the Red, Green and Blue LEDs in the
++# calamari/rgb-led. It does so by incrementing the accumulator every
++# second, then converting the accumulator integer value to bits, the
++# first bit goes to Red, the second to Green and the third to Blue.
++
++accumulator(int/accumulator:setup_value=val:0|min:0|max:255|step:1)
++
++timer(wallclock/second) OUT -> INC accumulator
++accumulator OUT -> IN int_to_byte(converter/int-to-byte)
++int_to_byte OUT -> IN byte_to_bits(converter/byte-to-bits)
++byte_to_bits OUT[0] -> RED led(RGBLed)
++byte_to_bits OUT[1] -> GREEN led
++byte_to_bits OUT[2] -> BLUE led
+diff --git a/repos/demo/minnow-calamari/sol-flow.json b/repos/demo/minnow-calamari/sol-flow.json
+new file mode 100644
+index 0000000..82bced0
+--- /dev/null
++++ b/repos/demo/minnow-calamari/sol-flow.json
+@@ -0,0 +1,133 @@
++{
++ "$schema": "http://solettaproject.github.io/soletta/schemas/config.schema",
++ "nodetypes": [
++  {
++   "name": "RGBLed",
++   "options": {
++    "blue_pin": 464,
++    "green_pin": 339,
++    "red_pin": 338
++   },
++   "type": "calamari/rgb-led"
++  },
++  {
++   "name": "SevenSegments",
++   "options": {
++    "clear_pin": 473,
++    "clock_pin": 340,
++    "data_pin": 474,
++    "latch_pin": 475
++   },
++   "type": "calamari/7seg"
++  },
++  {
++   "name": "LedRed",
++   "options": {
++    "pin": 338
++   },
++   "type": "gpio/writer"
++  },
++  {
++   "name": "LedGreen",
++   "options": {
++    "pin": 339
++   },
++   "type": "gpio/writer"
++  },
++  {
++   "name": "LedBlue",
++   "options": {
++    "pin": 464
++   },
++   "type": "gpio/writer"
++  },
++  {
++   "name": "Button1",
++   "options": {
++    "active_low": true,
++    "edge_falling": true,
++    "edge_rising": true,
++    "pin": 472,
++    "pull": "up"
++   },
++   "type": "gpio/reader"
++  },
++  {
++   "name": "Button2",
++   "options": {
++    "active_low": true,
++    "edge_falling": true,
++    "edge_rising": true,
++    "pin": 482,
++    "pull": "up"
++   },
++   "type": "gpio/reader"
++  },
++  {
++   "name": "Button3",
++   "options": {
++    "active_low": true,
++    "edge_falling": true,
++    "edge_rising": true,
++    "pin": 483,
++    "pull": "up"
++   },
++   "type": "gpio/reader"
++  },
++  {
++   "name": "Led1",
++   "options": {
++    "address": 1,
++    "period": 10000,
++    "range": "min:0|max:10000|step:1"
++   },
++   "type": "calamari/led"
++  },
++  {
++   "name": "Led2",
++   "options": {
++    "address": 2,
++    "period": 10000,
++    "range": "min:0|max:10000|step:1"
++   },
++   "type": "calamari/led"
++  },
++  {
++   "name": "LedLever",
++   "options": {
++    "bus": 0,
++    "chip_select": 0,
++    "poll_interval": 100,
++    "range": "min:0|max:1000|step:1"
++   },
++   "type": "calamari/lever"
++  },
++  {
++   "name": "SegmentsLever",
++   "options": {
++    "bus": 0,
++    "chip_select": 0,
++    "poll_interval": 100,
++    "range": "min:0|max:15|step:1"
++   },
++   "type": "calamari/lever"
++  }
++ ],
++ "maps": [
++     {
++         "version": 1,
++         "path": "create,i2c,platform/80860F41:05,0x50,24c256",
++         "entries": [
++             {
++                 "name": "_version",
++                 "offset": 200,
++                 "size": 1
++             },
++             {
++                 "name": "accumulated",
++                 "size": 16
++             }
++         ]
++     }
++ ]
++}
+diff --git a/server/tools.js b/server/tools.js
+index 1e27d52..e441d1b 100644
+--- a/server/tools.js
++++ b/server/tools.js
+@@ -32,7 +32,7 @@ module.exports = function () {
+     var path = require('path');
+ 
+     this.home_dir = function(user) {
+-        return __dirname + '/../repos/' + user + '/';
++        return __dirname + '/../repos/demo/';
+     };
+ 
+     this.tmp_dir = function(user) {
+-- 
+2.6.0
+

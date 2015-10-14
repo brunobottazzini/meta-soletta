@@ -10,6 +10,7 @@ SRC_URI = "https://github.com/solettaproject/soletta-dev-app/releases/download/v
            file://soletta-dev-app.service \
            file://soletta-dev-app-mac.sh \
            file://soletta-dev-app-avahi-discover.service \
+           file://0001-Demo.patch \
 "
 
 S = "${WORKDIR}/${PN}"
