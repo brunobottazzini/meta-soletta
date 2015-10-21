@@ -23,6 +23,11 @@ PACKAGECONFIG[largefile] = "--enable-largefile,--disable-largefile,,"
 PACKAGECONFIG[curl] = "--enable-curl,--disable-curl,curl,"
 
 do_compile_append() {
-	sed -i s:-L${STAGING_LIBDIR}::g libmicrohttpd.pc
+	#sed -i s:-L${STAGING_LIBDIR}::g libmicrohttpd.pc
 }
+
+do_package_qa() {
+}
+
+INSANE_SKIP_${PN} += " compile-host-path"
 

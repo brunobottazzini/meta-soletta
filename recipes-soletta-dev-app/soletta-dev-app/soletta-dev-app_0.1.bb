@@ -10,7 +10,16 @@ SRC_URI = "https://github.com/solettaproject/soletta-dev-app/releases/download/v
            file://soletta-dev-app.service \
            file://soletta-dev-app-mac.sh \
            file://soletta-dev-app-avahi-discover.service \
+           file://configuration.json \
+           file://node-types-html.tar.gz \
+           file://0001-fix-set-FBP-highlight-when-starting-the-application-.patch \
+           file://0002-Make-sessions-system-to-be-able-to-turn-off.patch \
+           file://0003-Update-documentation-due-the-session-system-changes.patch \
+           file://0001-fix-remove-uneeded-error-check.patch \
+           file://0002-Demo.patch \
+           file://0003-Demo-edison.patch \
 "
+
 
 S = "${WORKDIR}/${PN}"
 
@@ -56,5 +65,11 @@ do_install() {
 
  #Install set MAC address script
  install  -m 0755 ${WORKDIR}/soletta-dev-app-mac.sh ${D}${INSTALLATION_PATH}soletta-dev-app/scripts/
+
+ #Install local nodetypes
+ tar -zxf ${WORKDIR}/node-types-html.tar.gz -C ${D}${INSTALLATION_PATH}soletta-dev-app/client/
+
+ rm ${D}${INSTALLATION_PATH}soletta-dev-app/server/configuration.json
+ install -m 0655 ${WORKDIR}/configuration.json ${D}${INSTALLATION_PATH}soletta-dev-app/server/configuration.json
 
 }
