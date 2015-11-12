@@ -79,7 +79,7 @@ do_configure_prepend() {
 }
 
 do_compile() {
-   oe_runmake CFLAGS="--sysroot=${STAGING_DIR_TARGET} -pthread -lpcre" TARGETCC="${CC}" TARGETAR="${AR}"
+   oe_runmake CFLAGS="--sysroot=${STAGING_DIR_TARGET} -ffloat-store -pthread -lpcre" TARGETCC="${CC}" TARGETAR="${AR}"
 }
 
 do_install() {
